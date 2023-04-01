@@ -1,12 +1,14 @@
+import clsx from 'clsx';
 import React from 'react'
 
 type HeaderProps = {
-    children: string
+    children: string;
+    className?: string;
 }
 
-const Header = ({ children }: HeaderProps) => {
+const Header = ({ children, className }: HeaderProps) => {
     return (
-        <h1 className='text-3xl dark:text-white text-slate-700'>{children}</h1>
+        <h1 className={clsx('text-3xl dark:text-white text-slate-700', className)}>{children}</h1>
     )
 }
 
