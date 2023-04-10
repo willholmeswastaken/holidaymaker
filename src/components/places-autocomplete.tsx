@@ -2,8 +2,10 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocom
 
 export const PlacesAutocomplete = ({
     onAddressSelect,
+    address
 }: {
-    onAddressSelect?: (address: string) => void;
+    onAddressSelect?: (address: string, lat: number, lng: number) => void;
+    address?: string;
 }) => {
     const {
         ready,
@@ -14,6 +16,7 @@ export const PlacesAutocomplete = ({
     } = usePlacesAutocomplete({
         debounce: 300,
         cache: 86400,
+        defaultValue: address || undefined
     });
 
     const renderSuggestions = () => {
@@ -27,14 +30,14 @@ export const PlacesAutocomplete = ({
             return (
                 <li
                     key={place_id}
-                    className="py-2 px-4 bg-blue-400 my-1 cursor-pointer"
+                    className="cursor-pointer mb-1 w-full text-gray-700 px-3 py-2 border border-slate-300 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 bg-transparent  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent focus:ring-offset-2 rounded-md"
                     onClick={() => {
                         setValue(description, false);
                         clearSuggestions();
-                        onAddressSelect && onAddressSelect(description);
                         void getGeocode({ address: description }).then((results) => {
                             const { lat, lng } = getLatLng(results[0]!);
                             console.log("📍 Coordinates: ", { lat, lng });
+                            onAddressSelect && onAddressSelect(description, lat, lng);
                         });
                     }}
                 >
@@ -48,14 +51,14 @@ export const PlacesAutocomplete = ({
         <div className='w-full h-full'>
             <input
                 value={value}
-                className='w-[96%] my-12 mx-auto mt-0 p-[16px] block border border-red-300 border-solid'
+                className='w-full text-gray-700 px-3 py-2 border border-slate-300 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 bg-transparent  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent focus:ring-offset-2 rounded-md'
                 disabled={!ready}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="123 Stariway To Heaven"
+                placeholder="10 Downing Street"
             />
 
             {status === 'OK' && (
-                <ul className='mx-auto px-4 list-none overflow-x-hidden block w-[96%]'>{renderSuggestions()}</ul>
+                <ul className='mt-4 mx-auto px-4 list-none overflow-x-hidden block w-[96%]'>{renderSuggestions()}</ul>
             )}
         </div>
     );

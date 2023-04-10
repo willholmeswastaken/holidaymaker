@@ -4,44 +4,30 @@ import Header from "@/components/ui/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Map } from "@/components/map";
 import { HolidaysTable } from "@/components/holidays-table";
-import { prisma } from "@/server/db";
 import { requireAuth } from "@/utils/requireAuth";
-import { getSession } from "next-auth/react";
 import { type HolidayWithPhoto } from "@/types/HolidayWithPhoto";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
+import GoogleMapsComponent from "@/components/google-maps-component";
+import { api } from "@/utils/api";
 
-export const getServerSideProps = requireAuth(async (ctx) => {
-    const session = await getSession({ ctx });
-    const holidays = (await prisma.holiday.findMany({
-        where: {
-            userId: session?.user.id,
-        },
-        include: {
-            photos: true,
-        },
-    }))
-        .sort(
-            (a, b) =>
-                Date.parse(b.loggedAt.toISOString()) -
-                Date.parse(a.loggedAt.toISOString())
-        );
-    return {
-        props: {
-            holidays
-        }
-    }
-}, '/scrapbook');
+
+export const getServerSideProps = requireAuth(undefined, '/scrapbook');
 
 type Props = {
     holidays: HolidayWithPhoto[];
 }
 
-const Scrapbook: NextPage<Props> = ({ holidays }) => {
+const Scrapbook: NextPage<Props> = () => {
     const router = useRouter();
     const addHoliday = () => {
         void router.push('/add-holiday');
     }
+    const { isLoading, data: holidays, isError } = api.holiday.getHolidays.useQuery();
+
+    if (isLoading) return <div>Loading...</div>;
+
+    if (isError) return <div>Error</div>;
     return (
         <>
             <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-20">
@@ -55,7 +41,9 @@ const Scrapbook: NextPage<Props> = ({ holidays }) => {
                         <TabsTrigger value="password">Table View</TabsTrigger>
                     </TabsList>
                     <TabsContent value="account">
-                        <Map holidays={holidays} />
+                        <GoogleMapsComponent position="center">
+                            <Map holidays={holidays} />
+                        </GoogleMapsComponent>
                     </TabsContent>
                     <TabsContent value="password">
                         <HolidaysTable holidays={holidays} />

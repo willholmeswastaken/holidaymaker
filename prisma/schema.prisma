@@ -49,14 +49,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   holidays      Holiday[]
+  holidayPhotos HolidayPhoto[]
 }
 
 model VerificationToken {
@@ -83,10 +84,12 @@ model Holiday {
 }
 
 model HolidayPhoto {
-  id           String   @id @default(cuid())
-  holidayId    String
-  photoUrl     String
-  uploadedAt   DateTime @default(now())
-  isCoverPhoto Boolean  @default(false)
-  holiday      Holiday  @relation(fields: [holidayId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  holidayId     String
+  photoFileName String
+  uploadedAt    DateTime @default(now())
+  isCoverPhoto  Boolean  @default(false)
+  userId        String
+  holiday       Holiday  @relation(fields: [holidayId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

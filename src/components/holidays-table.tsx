@@ -18,7 +18,7 @@ export const HolidaysTable = ({ holidays }: Props) => {
         }),
         columnHelper.accessor('locationAddress', {
             header: 'Location',
-            cell: info => `£${(info.getValue() as Prisma.Decimal).toFixed(2)}`,
+            cell: info => info.getValue() as string,
             footer: info => info.column.id,
         }),
         columnHelper.accessor('visitedAt', {
