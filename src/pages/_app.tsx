@@ -13,14 +13,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden dark:bg-slate-900">
-      <SessionProvider session={session}>
-        <Header />
-        <main className="flex-grow">
-          <Component {...pageProps} />
-        </main>
-        <Footer />
-      </SessionProvider>
+    <div className="bg-white dark:bg-slate-900">
+      <div className="flex flex-col min-h-screen overflow-hidden max-w-6xl mx-auto space-y-6">
+        <SessionProvider session={session}>
+          <Header />
+          <main className="flex-grow relative px-4 sm:px-6">
+            <Component {...pageProps} />
+          </main>
+          <Footer />
+        </SessionProvider>
+      </div>
     </div>
   );
 };

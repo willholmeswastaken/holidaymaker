@@ -30,28 +30,24 @@ const Scrapbook: NextPage<Props> = () => {
     if (isError) return <div>Error</div>;
     return (
         <>
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-20">
-                <div className="flex flex-row">
-                    <Header className="pb-4 flex-1">My Scrapbook</Header>
-                    <Button onClick={addHoliday}>Add Holiday</Button>
-                </div>
-                <Tabs defaultValue="account" className="w-full flex flex-col">
-                    <TabsList className="w-[400px] self-center">
-                        <TabsTrigger value="account">Map View</TabsTrigger>
-                        <TabsTrigger value="password">Table View</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="account">
-                        <GoogleMapsComponent position="center">
-                            <Map holidays={holidays} />
-                        </GoogleMapsComponent>
-                    </TabsContent>
-                    <TabsContent value="password">
-                        <HolidaysTable holidays={holidays} />
-                    </TabsContent>
-                </Tabs>
-
+            <div className="flex flex-row">
+                <Header className="pb-4 flex-1">My Scrapbook</Header>
+                <Button onClick={addHoliday}>Add Holiday</Button>
             </div>
-
+            <Tabs defaultValue="account" className="w-full flex flex-col">
+                <TabsList className="w-[400px] self-center">
+                    <TabsTrigger value="account">Map View</TabsTrigger>
+                    <TabsTrigger value="password">Table View</TabsTrigger>
+                </TabsList>
+                <TabsContent value="account">
+                    <GoogleMapsComponent position="center">
+                        <Map holidays={holidays} />
+                    </GoogleMapsComponent>
+                </TabsContent>
+                <TabsContent value="password">
+                    <HolidaysTable holidays={holidays} />
+                </TabsContent>
+            </Tabs>
         </>
     );
 };
