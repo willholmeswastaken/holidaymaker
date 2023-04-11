@@ -26,6 +26,8 @@ const server = z.object({
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_REGION: z.string(),
   AWS_BUCKET: z.string(),
+  UPSTASH_REDIS_ENDPOINT: z.string(),
+  UPSTASH_REDIS_TOKEN: z.string(),
 });
 
 /**
@@ -55,6 +57,8 @@ const processEnv = {
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_REGION: process.env.AWS_REGION,
   AWS_BUCKET: process.env.AWS_BUCKET,
+  UPSTASH_REDIS_ENDPOINT: process.env.UPSTASH_REDIS_ENDPOINT,
+  UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
