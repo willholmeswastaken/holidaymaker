@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useEffect, useMemo } from "react"
 import Link from "next/link"
-import { useSelectedLayoutSegment } from "next/navigation"
 
 import { cn } from "@/utils/cn"
 import { Icons } from "@/components/icons"
@@ -25,6 +24,10 @@ export function MainNav({ items, children, isAuthenticated }: MainNavProps) {
         }
         return items?.filter(x => !x.requiresAuth);
     }, [isAuthenticated, items]);
+
+    useEffect(() => {
+        setShowMobileMenu(false);
+    }, [route]);
 
     return (
         <div className="flex gap-6 md:gap-10">
@@ -52,14 +55,14 @@ export function MainNav({ items, children, isAuthenticated }: MainNavProps) {
                 </nav>
             ) : null}
             <button
-                className="flex items-center space-x-2 md:hidden"
+                className="flex items-center space-x-2 md:hidden dark:text-white"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-                {showMobileMenu ? <Icons.close /> : <Icons.logo />}
+                {showMobileMenu ? <Icons.close /> : <Icons.burger />}
                 <span className="font-bold">Menu</span>
             </button>
             {showMobileMenu && items && (
-                <MobileNav items={items}>{children}</MobileNav>
+                <MobileNav items={items} isAuthenticated={isAuthenticated}>{children}</MobileNav>
             )}
         </div>
     )

@@ -3,22 +3,16 @@ import { type NextPage } from "next";
 import Header from "@/components/ui/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Map } from "@/components/map";
-import { HolidaysTable } from "@/components/holidays-table";
 import { requireAuth } from "@/utils/requireAuth";
-import { type HolidayWithPhoto } from "@/types/HolidayWithPhoto";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import GoogleMapsComponent from "@/components/google-maps-component";
 import { api } from "@/utils/api";
-
+import HolidaysList from "@/components/holidays-list";
 
 export const getServerSideProps = requireAuth(undefined, '/scrapbook');
 
-type Props = {
-    holidays: HolidayWithPhoto[];
-}
-
-const Scrapbook: NextPage<Props> = () => {
+const Scrapbook: NextPage = () => {
     const router = useRouter();
     const addHoliday = () => {
         void router.push('/add-holiday');
@@ -36,8 +30,8 @@ const Scrapbook: NextPage<Props> = () => {
             </div>
             <Tabs defaultValue="account" className="w-full flex flex-col">
                 <TabsList className="w-[400px] self-center">
-                    <TabsTrigger value="account">Map View</TabsTrigger>
-                    <TabsTrigger value="password">Table View</TabsTrigger>
+                    <TabsTrigger value="account">Holiday Map</TabsTrigger>
+                    <TabsTrigger value="password">Holiday List</TabsTrigger>
                 </TabsList>
                 <TabsContent value="account">
                     <GoogleMapsComponent position="center">
@@ -45,7 +39,7 @@ const Scrapbook: NextPage<Props> = () => {
                     </GoogleMapsComponent>
                 </TabsContent>
                 <TabsContent value="password">
-                    <HolidaysTable holidays={holidays} />
+                    <HolidaysList holidays={holidays} />
                 </TabsContent>
             </Tabs>
         </>

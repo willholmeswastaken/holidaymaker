@@ -1,6 +1,7 @@
 import {
     AlertTriangle,
     ArrowRight,
+    AlignJustify,
     Check,
     ChevronLeft,
     ChevronRight,
@@ -45,6 +46,7 @@ export const Icons = {
     arrowRight: ArrowRight,
     help: HelpCircle,
     pizza: Pizza,
+    burger: AlignJustify,
     gitHub: ({ ...props }: LucideProps) => (
         <svg
             aria-hidden="true"

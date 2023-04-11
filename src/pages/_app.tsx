@@ -8,6 +8,10 @@ import "@/styles/globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
+import * as dayjs from 'dayjs'
+import 'dayjs/locale/en-gb'
+dayjs.locale('en-gb');
+
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
