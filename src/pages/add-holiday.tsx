@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import GoogleMapsComponent from "@/components/google-maps-component";
 import ErrorLabel from "@/components/ui/errorLabel";
 import { useMemo } from "react";
+import { toast } from "@/hooks/use-toast";
 
 export const getServerSideProps = requireAuth(undefined, '/add-holiday');
 
@@ -49,10 +50,17 @@ const Scrapbook: NextPage = () => {
             return fetch(`/api/upload-photo?holidayId=${encodeURIComponent(holidayId)} `, {
                 method: 'POST',
                 body: formData,
-            }).then(
-                (res) => res.json(),
-            )
+            });
         },
+        onSuccess: (data) => {
+            if (!data.ok) {
+                toast({
+                    title: "Image upload failed",
+                    description: "Your holiday was created but the image upload failed. Please try again later.",
+                    variant: "destructive",
+                });
+            }
+        }
     })
     const createHoliday = api.holiday.createHoliday.useMutation();
     const isLoading = useMemo<boolean>(() => createHoliday.isLoading || uploadPhotoMutation.isLoading, [createHoliday.isLoading, uploadPhotoMutation.isLoading]);
@@ -66,11 +74,13 @@ const Scrapbook: NextPage = () => {
 
         for (const photo of data.photos || []) {
             await uploadPhotoMutation.mutateAsync({ photo, holidayId });
-            if (uploadPhotoMutation.isError) {
-                // todo: launch toast
-                return;
-            }
         }
+
+        toast({
+            title: "Holiday created",
+            description: "You can view this holiday in your scrapbook now.",
+            variant: "default",
+        });
         await router.push('/scrapbook');
     };
     return (

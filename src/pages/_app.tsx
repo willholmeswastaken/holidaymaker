@@ -10,6 +10,7 @@ import Footer from "@/components/footer";
 
 import * as dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
+import { Toaster } from "@/components/ui/toaster";
 dayjs.locale('en-gb');
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -23,6 +24,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <Header />
           <main className="flex-grow relative px-4 sm:px-6">
             <Component {...pageProps} />
+            <Toaster />
           </main>
           <Footer />
         </SessionProvider>
