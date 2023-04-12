@@ -69,8 +69,13 @@ export default async function handler(
       logger.warn("No photo file was uploaded, returning 400 status code");
       return;
     }
-    logger.info("Photo file was uploaded, uploading to S3");
     const file = files.file as File;
+    if (!file.mimetype?.startsWith("image/")) {
+      res.status(400).send("File must be an image");
+      logger.warn("File was not an image, returning 400 status code");
+      return;
+    }
+    logger.info("Photo file was submitted, uploading to S3");
     const fileExtension = file.originalFilename?.split(".").pop() ?? "";
     const fileName = `${uuidv4()}.${fileExtension}`;
 

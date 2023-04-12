@@ -67,6 +67,7 @@ const Scrapbook: NextPage = () => {
         for (const photo of data.photos || []) {
             await uploadPhotoMutation.mutateAsync({ photo, holidayId });
             if (uploadPhotoMutation.isError) {
+                // todo: launch toast
                 return;
             }
         }
@@ -131,7 +132,7 @@ const Scrapbook: NextPage = () => {
 
                         <div className="flex flex-col gap-y-2">
                             <Label htmlFor="description">Photo</Label>
-                            <input type="file" className="text-white" {...register("photos")} multiple />
+                            <input type="file" className="text-white" {...register("photos")} multiple accept="image/*" />
                             {errors.photos && <ErrorLabel>This field is required</ErrorLabel>}
                         </div>
 
