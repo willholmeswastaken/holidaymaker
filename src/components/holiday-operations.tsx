@@ -24,15 +24,29 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto"
+import { api } from "@/utils/api"
 
 interface HolidayOperationsProps {
     holiday: Pick<HolidayWithPhotoViewModel, "id" | "title">
 }
 
 export function HolidayOperations({ holiday }: HolidayOperationsProps) {
-    const router = useRouter()
     const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false)
     const [isDeleteLoading, setIsDeleteLoading] = React.useState<boolean>(false)
+    const trpcCtx = api.useContext();
+    const removeHolidayMutation = api.holiday.removeHoliday.useMutation({
+        onMutate: () => {
+            setIsDeleteLoading(true);
+        },
+        onSuccess: async () => {
+            setIsDeleteLoading(false);
+            await trpcCtx.holiday.getHolidays.invalidate();
+        }
+    });
+
+    const onRemoveHoliday = () => {
+        removeHolidayMutation.mutate({ id: holiday.id });
+    };
 
     return (
         <>
@@ -70,6 +84,7 @@ export function HolidayOperations({ holiday }: HolidayOperationsProps) {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             className="bg-red-600 focus:ring-red-600"
+                            onClick={onRemoveHoliday}
                         >
                             {isDeleteLoading ? (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

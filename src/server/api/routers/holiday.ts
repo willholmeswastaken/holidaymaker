@@ -47,7 +47,7 @@ export const holidayRouter = createTRPCRouter({
         if (!photoUrl || photoUrl.length === 0) {
           const redisSetResult = await redis.setex(
             key,
-            photoExpirySeconds,
+            photoExpirySeconds - 60,
             await generateSignedUrl(key)
           );
           if (redisSetResult === "OK") {
@@ -77,10 +77,10 @@ export const holidayRouter = createTRPCRouter({
   createHoliday: protectedProcedure
     .input(
       z.object({
-        title: z.string(),
+        title: z.string().nonempty(),
         description: z.string(),
-        visitedAt: z.string(),
-        locationAddress: z.string(),
+        visitedAt: z.string().nonempty(),
+        locationAddress: z.string().nonempty(),
         locationLat: z.number(),
         locationLng: z.number(),
       })
@@ -99,6 +99,19 @@ export const holidayRouter = createTRPCRouter({
       });
 
       return holiday.id;
+    }),
+  removeHoliday: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.holiday.delete({
+        where: {
+          id: input.id,
+        },
+      });
     }),
 });
 
