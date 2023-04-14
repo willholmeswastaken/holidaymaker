@@ -28,9 +28,10 @@ import { api } from "@/utils/api"
 
 interface HolidayOperationsProps {
     holiday: Pick<HolidayWithPhotoViewModel, "id" | "title">
+    onHolidayRemoved?: () => void;
 }
 
-export function HolidayOperations({ holiday }: HolidayOperationsProps) {
+export function HolidayOperations({ holiday, onHolidayRemoved }: HolidayOperationsProps) {
     const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false)
     const [isDeleteLoading, setIsDeleteLoading] = React.useState<boolean>(false)
     const trpcCtx = api.useContext();
@@ -46,6 +47,7 @@ export function HolidayOperations({ holiday }: HolidayOperationsProps) {
 
     const onRemoveHoliday = () => {
         removeHolidayMutation.mutate({ id: holiday.id });
+        onHolidayRemoved?.();
     };
 
     return (

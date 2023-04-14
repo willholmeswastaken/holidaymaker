@@ -1,13 +1,13 @@
 import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import { useState, useMemo } from "react";
 import MarkerWindow from "./marker-window";
-import { type HolidayWithPhoto } from "@/types/HolidayWithPhoto";
+import { type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto";
 
 type MapProps = {
-    holidays: HolidayWithPhoto[];
+    holidays: HolidayWithPhotoViewModel[];
 }
 export const Map = ({ holidays }: MapProps) => {
-    const [selectedMarker, setSelectedMarker] = useState<HolidayWithPhoto | null>(null);
+    const [selectedMarker, setSelectedMarker] = useState<HolidayWithPhotoViewModel | null>(null);
     const mapCenter = useMemo(
         () => ({ lat: 26.672932021393862, lng: 85.31184012689732 }),
         []
@@ -22,7 +22,7 @@ export const Map = ({ holidays }: MapProps) => {
         []
     );
 
-    const onMarkerOpen = (holiday: HolidayWithPhoto) => {
+    const onMarkerOpen = (holiday: HolidayWithPhotoViewModel) => {
         setSelectedMarker(holiday);
     };
 
