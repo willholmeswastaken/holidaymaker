@@ -7,6 +7,9 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    domains: ["holidaymaker-photos.s3.eu-west-1.amazonaws.com"],
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
