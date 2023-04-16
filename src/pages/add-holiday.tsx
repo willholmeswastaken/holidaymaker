@@ -18,6 +18,7 @@ import GoogleMapsComponent from "@/components/google-maps-component";
 import ErrorLabel from "@/components/ui/errorLabel";
 import { useMemo } from "react";
 import { toast } from "@/hooks/use-toast";
+import PhotoPreview from "@/components/photo-preview";
 
 export const getServerSideProps = requireAuth(undefined, '/add-holiday');
 
@@ -37,12 +38,13 @@ type UploadHolidayPhotoProps = {
 };
 
 const Scrapbook: NextPage = () => {
-    const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<HolidayInputs>({
+    const router = useRouter();
+    const createHolidayMutation = api.holiday.createHoliday.useMutation();
+    const { register, handleSubmit, formState: { errors }, control, setValue, watch } = useForm<HolidayInputs>({
         defaultValues: {
             visitedAt: new Date().toISOString(),
         }
     });
-    const router = useRouter();
     const uploadPhotoMutation = useMutation({
         mutationFn: ({ photo, holidayId }: UploadHolidayPhotoProps) => {
             const formData = new FormData();
@@ -62,13 +64,12 @@ const Scrapbook: NextPage = () => {
             }
         }
     })
-    const createHoliday = api.holiday.createHoliday.useMutation();
-    const isLoading = useMemo<boolean>(() => createHoliday.isLoading || uploadPhotoMutation.isLoading, [createHoliday.isLoading, uploadPhotoMutation.isLoading]);
+    const isLoading = useMemo<boolean>(() => createHolidayMutation.isLoading || uploadPhotoMutation.isLoading, [createHolidayMutation.isLoading, uploadPhotoMutation.isLoading]);
 
     const onSubmit: SubmitHandler<HolidayInputs> = async data => {
-        const holidayId = await createHoliday.mutateAsync(data);
+        const holidayId = await createHolidayMutation.mutateAsync(data);
 
-        if (createHoliday.isError) return;
+        if (createHolidayMutation.isError) return;
 
         if (!data.photos) await router.push('/scrapbook');
 
@@ -97,7 +98,7 @@ const Scrapbook: NextPage = () => {
 
                         <div className="flex flex-col gap-y-2">
                             <Label htmlFor="description">Description</Label>
-                            <Textarea id="description" {...register("description", { required: true })} />
+                            <Textarea id="description" {...register("description")} />
                             {errors.description && <ErrorLabel>This field is required</ErrorLabel>}
                         </div>
 
@@ -144,6 +145,18 @@ const Scrapbook: NextPage = () => {
                             <Label htmlFor="description">Photo</Label>
                             <input type="file" className="text-white" {...register("photos")} multiple accept="image/*" />
                             {errors.photos && <ErrorLabel>This field is required</ErrorLabel>}
+                            <Controller
+                                name="photos"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="flex flex-wrap gap-2">
+                                        {field.value &&
+                                            Array.from(field.value).map((file, index) => (
+                                                <PhotoPreview key={index} file={file} />
+                                            ))}
+                                    </div>
+                                )}
+                            />
                         </div>
 
 
