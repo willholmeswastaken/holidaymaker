@@ -5,18 +5,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Map } from "@/components/map";
 import { requireAuth } from "@/utils/requireAuth";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/router";
 import GoogleMapsComponent from "@/components/google-maps-component";
 import { api } from "@/utils/api";
 import HolidaysList from "@/components/holidays-list";
+import Link from "next/link";
 
 export const getServerSideProps = requireAuth(undefined, '/scrapbook');
 
 const Scrapbook: NextPage = () => {
-    const router = useRouter();
-    const addHoliday = () => {
-        void router.push('/add-holiday');
-    }
     const { isLoading, data: holidays, isError } = api.holiday.getHolidays.useQuery();
 
     if (isLoading) return <div>Loading...</div>;
@@ -26,7 +22,9 @@ const Scrapbook: NextPage = () => {
         <>
             <div className="flex flex-row">
                 <Header className="pb-4 flex-1">My Scrapbook</Header>
-                <Button onClick={addHoliday}>Add Holiday</Button>
+                <Link href="/add-holiday">
+                    <Button>Add Holiday</Button>
+                </Link>
             </div>
             <Tabs defaultValue="account" className="w-full flex flex-col">
                 <TabsList className="w-[400px] self-center">

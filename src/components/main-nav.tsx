@@ -8,6 +8,7 @@ import { Icons } from "@/components/icons"
 import { MobileNav } from "@/components/mobile-nav"
 import { type NavItem } from "@/types/MainNavItem"
 import { useRouter } from "next/router"
+import Image from "next/image"
 
 interface MainNavProps {
     items: NavItem[]
@@ -32,7 +33,14 @@ export function MainNav({ items, children, isAuthenticated }: MainNavProps) {
     return (
         <div className="flex gap-6 md:gap-10">
             <Link href="/" className="hidden items-center space-x-2 md:flex dark:text-white">
-                <Icons.logo />
+                <div className="w-8 h-8">
+                    <Image
+                        src="/logo.jpeg"
+                        alt='Holiday maker logo'
+                        width={100}
+                        height={100}
+                        className='object-contain rounded-full' />
+                </div>
                 <span className="hidden font-bold sm:inline-block">
                     HolidayMaker
                 </span>

@@ -36,11 +36,9 @@ export const holidayRouter = createTRPCRouter({
         });
       }
       if (photos.length === 0) {
-        const key = "default.jpeg";
-        const photoUrl = await getS3ImageUrl(key);
         photos.push({
           id: "default",
-          photoUrl,
+          photoUrl: "/default.jpeg",
           isCoverPhoto: true,
           holidayId: holiday.id,
           userId: ctx.session.user.id,
