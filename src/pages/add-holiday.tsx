@@ -148,14 +148,23 @@ const Scrapbook: NextPage = () => {
                             <Controller
                                 name="photos"
                                 control={control}
-                                render={({ field }) => (
-                                    <div className="flex flex-wrap gap-2">
-                                        {field.value &&
-                                            Array.from(field.value).map((file, index) => (
-                                                <PhotoPreview key={index} file={file} />
-                                            ))}
-                                    </div>
-                                )}
+                                render={({ field }) => {
+                                    const setCoverPhoto = (file: File) => {
+                                        if (field.value) {
+                                            field.onChange([file, ...Array.from(field.value).filter(f => f !== file)])
+                                        } else {
+                                            field.onChange([file]);
+                                        }
+                                    }
+                                    return (
+                                        <div className="flex flex-wrap gap-2">
+                                            {field.value &&
+                                                Array.from(field.value).map((file, index) => (
+                                                    <PhotoPreview isCoverPhoto={index === 0} setIsCoverPhoto={setCoverPhoto} key={index} file={file} />
+                                                ))}
+                                        </div>
+                                    )
+                                }}
                             />
                         </div>
 
