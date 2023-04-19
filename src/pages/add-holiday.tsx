@@ -20,7 +20,7 @@ import { useMemo } from "react";
 import { toast } from "@/hooks/use-toast";
 import PhotoPreview from "@/components/photo-preview";
 
-export const getServerSideProps = requireAuth(undefined, '/add-holiday');
+export const getServerSideProps = requireAuth(undefined, 'add-holiday');
 
 type HolidayInputs = {
     title: string;

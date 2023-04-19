@@ -11,7 +11,7 @@ import HolidaysList from "@/components/holidays-list";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const getServerSideProps = requireAuth(undefined, '/scrapbook');
+export const getServerSideProps = requireAuth(undefined, 'scrapbook');
 
 const Scrapbook: NextPage = () => {
     const { isLoading, data: holidays, isError } = api.holiday.getHolidays.useQuery();

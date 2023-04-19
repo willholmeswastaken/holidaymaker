@@ -1,14 +1,14 @@
 import { MainNav } from './main-nav';
-import { cn } from '@/utils/cn';
-import { Button, buttonVariants } from './ui/button';
-import Link from 'next/link';
+import { Button } from './ui/button';
 import { useMemo } from 'react';
 import { UserAccountNav } from './user-account-nav';
 import { signIn, useSession } from 'next-auth/react';
 
 function Header() {
     const { data: sessionData, } = useSession();
-    const isAuthenticated = useMemo<boolean>(() => sessionData?.user !== null, [sessionData?.user]);
+    const isAuthenticated = useMemo<boolean>(() => sessionData?.user !== null && sessionData?.user !== undefined, [sessionData]);
+    console.log('isAuthenticated', isAuthenticated)
+    console.log(sessionData?.user);
     const onLogIn = () => {
         void signIn(undefined, { callbackUrl: `${window.location.origin}/scrapbook` });
     }
