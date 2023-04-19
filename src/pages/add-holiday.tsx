@@ -40,7 +40,7 @@ type UploadHolidayPhotoProps = {
 const Scrapbook: NextPage = () => {
     const router = useRouter();
     const createHolidayMutation = api.holiday.createHoliday.useMutation();
-    const { register, handleSubmit, formState: { errors }, control, setValue, watch } = useForm<HolidayInputs>({
+    const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<HolidayInputs>({
         defaultValues: {
             visitedAt: new Date().toISOString(),
         }

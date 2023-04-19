@@ -1,4 +1,3 @@
-import Link from "next/link"
 import { type User } from "next-auth"
 import { signOut } from "next-auth/react"
 import {

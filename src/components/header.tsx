@@ -7,8 +7,6 @@ import { signIn, useSession } from 'next-auth/react';
 function Header() {
     const { data: sessionData, } = useSession();
     const isAuthenticated = useMemo<boolean>(() => sessionData?.user !== null && sessionData?.user !== undefined, [sessionData]);
-    console.log('isAuthenticated', isAuthenticated)
-    console.log(sessionData?.user);
     const onLogIn = () => {
         void signIn(undefined, { callbackUrl: `${window.location.origin}/scrapbook` });
     }
