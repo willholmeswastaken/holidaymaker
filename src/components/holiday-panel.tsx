@@ -20,6 +20,8 @@ const HolidayPanel = ({ holiday }: Props) => {
                     alt={`Holiday photo for ${holiday.title}`}
                     fill
                     className='object-cover'
+                    placeholder='blur'
+                    blurDataURL='/loading.png'
                 />
             </div>
             <div className="flex flex-col px-4 flex-1">
