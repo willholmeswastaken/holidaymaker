@@ -6,27 +6,29 @@ import Image from 'next/image';
 import clsx from 'clsx';
 
 type PhotoPreviewProps = {
-    file: File;
+    file?: File;
+    src?: string;
     isCoverPhoto: boolean;
-    setIsCoverPhoto: (file: File) => void;
+    setIsCoverPhoto?: (file: File) => void;
 };
 
-const PhotoPreview = ({ file, isCoverPhoto, setIsCoverPhoto }: PhotoPreviewProps) => {
-    const [src, setSrc] = useState('');
+const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreviewProps) => {
+    const [fileSrc, setFileSrc] = useState('');
 
     useEffect(() => {
+        if (!file) return;
         const imageUrl = URL.createObjectURL(file);
-        setSrc(imageUrl);
+        setFileSrc(imageUrl);
 
         return () => {
             URL.revokeObjectURL(imageUrl);
         }
     }, [file]);
 
-    if (!src) return null;
+    if (!fileSrc && !src) return null;
 
     const onSelectPhoto = () => {
-        setIsCoverPhoto(file);
+        if (setIsCoverPhoto) setIsCoverPhoto(file!);
     }
 
     return (
@@ -37,10 +39,12 @@ const PhotoPreview = ({ file, isCoverPhoto, setIsCoverPhoto }: PhotoPreviewProps
                         className={clsx("w-24 h-24 relative cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110", isCoverPhoto && 'border-4 rounded-xl border-green-600')}
                         type='button'>
                         <Image
-                            src={src}
+                            src={src || fileSrc}
                             alt="preview"
                             fill
                             className="object-cover rounded-lg"
+                            placeholder='blur'
+                            blurDataURL='/loading.png'
                         />
                     </button>
                 </DialogTrigger>
@@ -50,10 +54,12 @@ const PhotoPreview = ({ file, isCoverPhoto, setIsCoverPhoto }: PhotoPreviewProps
                         <DialogDescription>
                             <div className="w-full h-[40rem] relative">
                                 <Image
-                                    src={src}
+                                    src={src || fileSrc}
                                     alt="preview"
                                     fill
-                                    className="object-contain w-full h-full" />
+                                    className="object-contain w-full h-full"
+                                    placeholder='blur'
+                                    blurDataURL='/loading.png' />
                             </div>
                         </DialogDescription>
                     </DialogHeader>

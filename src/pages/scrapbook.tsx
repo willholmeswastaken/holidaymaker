@@ -21,7 +21,7 @@ const Scrapbook: NextPage = () => {
         <>
             <div className="flex flex-row">
                 <Header className="pb-4 flex-1">My Scrapbook</Header>
-                <Link href="/add-holiday">
+                <Link href="/holiday/add">
                     <Button>Add Holiday</Button>
                 </Link>
             </div>

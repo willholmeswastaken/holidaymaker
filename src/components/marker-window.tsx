@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { HolidayOperations } from './holiday-operations';
+import Link from 'next/link';
 
 type MarkerWindow = {
     holiday: HolidayWithPhotoViewModel;
@@ -32,7 +33,7 @@ const MarkerWindow = ({ holiday, onMarkerClose }: MarkerWindow) => {
                 </div>
 
                 <div className='flex flex-col'>
-                    <p className='text-slate-900 font-semibold'>{holiday.title}</p>
+                    <Link href={`/holiday/${holiday.id}`} className='text-blue-500 underline font-semibold'>{holiday.title}</Link>
                     <p className='text-slate-400 text-xs'>{holiday.locationAddress}</p>
                     <p className='text-slate-500 text-xs'>{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</p>
                     <div className="flex flex-row space-x-2 mt-2 justify-end">

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import Image from 'next/image';
 import { HolidayOperations } from './holiday-operations';
 import dayjs from 'dayjs'
+import Link from 'next/link';
 
 type Props = {
     holiday: HolidayWithPhotoViewModel;
@@ -25,9 +26,9 @@ const HolidayPanel = ({ holiday }: Props) => {
                 />
             </div>
             <div className="flex flex-col px-4 flex-1">
-                <p className='text-slate-900 dark:text-white'>{holiday.title}</p>
-                <p className='text-slate-400 text-md'>{holiday.locationAddress}</p>
-                <p className='text-slate-500 text-sm'>{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</p>
+                <Link href={`/holiday/${holiday.id}`} className='text-blue-500 underline'>{holiday.title}</Link>
+                <p className='text-slate-200 text-md'>{holiday.locationAddress}</p>
+                <p className='text-slate-300 text-sm'>{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</p>
             </div>
             <HolidayOperations holiday={holiday} />
         </div>

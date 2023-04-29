@@ -32,6 +32,7 @@ export const holidayRouter = createTRPCRouter({
         );
         photos.push({
           ...photo,
+          uploadedAt: photo.uploadedAt.toISOString(),
           photoUrl: await getS3ImageUrl(key),
         });
       }
@@ -42,13 +43,15 @@ export const holidayRouter = createTRPCRouter({
           isCoverPhoto: true,
           holidayId: holiday.id,
           userId: ctx.session.user.id,
-          uploadedAt: new Date(),
+          uploadedAt: new Date().toISOString(),
           photoFileName: "Default",
         });
       }
 
       holidaysParsed.push({
         ...holiday,
+        visitedAt: holiday.visitedAt.toISOString(),
+        loggedAt: holiday.loggedAt.toISOString(),
         photos,
       });
     }
