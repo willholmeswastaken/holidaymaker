@@ -24,7 +24,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).end();
   } catch (error) {
     logger.error("Error removing photo from S3", error);
-    console.error(error);
     res.status(500).end();
   }
 }
