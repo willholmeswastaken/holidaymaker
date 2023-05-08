@@ -19,6 +19,11 @@ function Header() {
                         title: 'Scrapbook',
                         href: '/scrapbook',
                         requiresAuth: true
+                    },
+                    {
+                        title: 'Add Holiday',
+                        href: '/holiday/add',
+                        requiresAuth: true
                     }
                 ]} isAuthenticated={isAuthenticated} />
                 {

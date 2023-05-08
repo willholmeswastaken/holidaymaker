@@ -1,8 +1,18 @@
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 function HeroHome() {
+    // todo: refactor this and make it look nice
+    const { data: sessionData, } = useSession();
+    const { push } = useRouter();
+    const isAuthenticated = useMemo<boolean>(() => sessionData?.user !== null && sessionData?.user !== undefined, [sessionData]);
     const onGetStarted = () => {
-        void signIn(undefined, { callbackUrl: `${window.location.origin}/scrapbook` });
+        if (isAuthenticated) {
+            void push('/scrapbook');
+        } else {
+            void signIn(undefined, { callbackUrl: `${window.location.origin}/scrapbook` });
+        }
     }
     return (
         <section className="relative">

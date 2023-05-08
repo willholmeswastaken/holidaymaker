@@ -28,8 +28,8 @@ const HolidayPanel = ({ holiday }: Props) => {
             </div>
             <div className="flex flex-col px-4 flex-1">
                 <Link href={`/holiday/${holiday.id}`} className='text-blue-500 underline'>{holiday.title}</Link>
-                <p className='text-slate-200 text-md'>{holiday.locationAddress}</p>
-                <p className='text-slate-300 text-sm'>{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</p>
+                <p className='dark:text-slate-200 text-slate-600 text-md'>{holiday.locationAddress}</p>
+                <p className='dark:text-slate-300 text-slate-500 text-sm'>{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</p>
             </div>
             <HolidayOperations holiday={holiday} />
         </div>

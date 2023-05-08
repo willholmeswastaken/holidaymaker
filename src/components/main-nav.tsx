@@ -63,7 +63,7 @@ export function MainNav({ items, children, isAuthenticated }: MainNavProps) {
                 </nav>
             ) : null}
             <button
-                className="flex items-center space-x-2 md:hidden dark:text-white"
+                className="flex items-center gap-2 md:hidden dark:text-white"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
                 {showMobileMenu ? <Icons.close /> : <Icons.burger />}

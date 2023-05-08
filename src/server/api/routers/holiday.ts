@@ -149,14 +149,18 @@ export const holidayRouter = createTRPCRouter({
           id: input.id,
         },
       });
+      const photoRemovals: Promise<unknown>[] = [];
       for (const photo of holiday.photos) {
-        await qStashClient.publishJSON({
-          topic: env.QSTASH_PHOTO_REMOVAL_TOPIC,
-          body: {
-            photo: photo,
-          },
-        });
+        photoRemovals.push(
+          qStashClient.publishJSON({
+            topic: env.QSTASH_PHOTO_REMOVAL_TOPIC,
+            body: {
+              photo: photo,
+            },
+          })
+        );
       }
+      await Promise.all(photoRemovals);
     }),
   setCoverPhoto: protectedProcedure
     .input(

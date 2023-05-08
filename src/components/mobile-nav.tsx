@@ -1,9 +1,9 @@
 import { useMemo } from "react"
 import Link from "next/link"
+import Image from 'next/image'
 import { useLockBody } from "@/hooks/use-lock-body"
 
 import { cn } from "@/utils/cn"
-import { Icons } from "@/components/icons"
 import { type NavItem } from "@/types/MainNavItem"
 
 interface MobileNavProps {
@@ -29,7 +29,12 @@ export function MobileNav({ items, children, isAuthenticated }: MobileNavProps) 
         >
             <div className="relative z-20 grid gap-6 rounded-md bg-white p-4 shadow-md">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Icons.logo />
+                    <Image
+                        src="/logo.jpeg"
+                        alt='Holiday maker logo'
+                        width={25}
+                        height={25}
+                        className='object-contain rounded-full' />
                     <span className="font-bold">HolidayMaker</span>
                 </Link>
                 <nav className="grid grid-flow-row auto-rows-max text-sm">
