@@ -42,6 +42,8 @@ const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreview
                             src={src || fileSrc}
                             alt="preview"
                             fill
+                            sizes='(max-width: 100px) 100vw'
+                            priority
                             className="object-cover rounded-lg"
                             placeholder='blur'
                             blurDataURL='/loading.png'
@@ -51,24 +53,23 @@ const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreview
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Photo Preview</DialogTitle>
-                        <DialogDescription>
-                            <div className="w-full h-[40rem] relative">
-                                <Image
-                                    src={src || fileSrc}
-                                    alt="preview"
-                                    fill
-                                    className="object-contain w-full h-full"
-                                    placeholder='blur'
-                                    blurDataURL='/loading.png' />
-                            </div>
-                        </DialogDescription>
+                        <div className="w-full h-[40rem] relative">
+                            <Image
+                                src={src || fileSrc}
+                                alt="preview"
+                                fill
+                                sizes='(max-width: 640px) 100vw'
+                                className="object-contain w-full h-full"
+                                placeholder='blur'
+                                blurDataURL='/loading.png' />
+                        </div>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button>Close</Button>
+                            <Button className='dark:text-white' variant='ghost'>Close</Button>
                         </DialogClose>
                         <DialogClose asChild>
-                            <Button variant='subtle' onClick={onSelectPhoto}>Set as cover photo</Button>
+                            <Button className='dark:text-white' variant='outline' onClick={onSelectPhoto}>Set as cover photo</Button>
                         </DialogClose>
                     </DialogFooter>
                 </DialogContent>

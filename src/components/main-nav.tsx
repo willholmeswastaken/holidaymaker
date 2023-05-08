@@ -67,7 +67,7 @@ export function MainNav({ items, children, isAuthenticated }: MainNavProps) {
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
                 {showMobileMenu ? <Icons.close /> : <Icons.burger />}
-                <span className="font-bold">Menu</span>
+                <span className="font-bold">HolidayMaker</span>
             </button>
             {showMobileMenu && items && (
                 <MobileNav items={items} isAuthenticated={isAuthenticated}>{children}</MobileNav>

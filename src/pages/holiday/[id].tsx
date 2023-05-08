@@ -1,4 +1,3 @@
-import Header from "@/components/ui/header";
 import { prisma } from "@/server/db";
 import { type HolidayPhotoViewModel, type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto";
 import { getS3ImageUrl } from "@/utils/getS3ImageUrl";
@@ -7,7 +6,15 @@ import { s3FilePathResolver } from "@/utils/s3FilePathResolver";
 import { type NextPage } from "next";
 import { getSession } from "next-auth/react";
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import PhotoPreview from "@/components/photo-preview";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import GoogleMapsComponent from "@/components/google-maps-component";
+import { Map } from "@/components/map";
+import { BackButton } from "@/components/back-button";
+import { cn } from "@/utils/cn";
+
+dayjs.extend(relativeTime)
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     const { id } = ctx.query;
@@ -70,43 +77,89 @@ type Props = {
 }
 
 const ViewHoliday: NextPage<Props> = ({ holiday }) => {
-
+    const hasPhotos = holiday.photos.length > 0;
+    const hasDescription = holiday.description.length > 0;
     return (
         <>
-            <div className="grid grid-cols-3 gap-4">
-                <div className="flex flex-col dark:bg-slate-800 rounded-xl p-4">
-                    <Header className="text-slate-800 dark:text-white">{holiday.title}</Header>
+            <div className="flex flex-col space-y-4">
+                <BackButton />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">
+                            <CardTitle className="text-sm font-medium">
+                                Holiday
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className='dark:text-white'>
+                            <div className="text-2xl font-bold">{holiday.title}</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">
+                            <CardTitle className="text-sm font-medium">
+                                Destination
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className='dark:text-white'>
+                            <div className="text-2xl font-bold">{holiday.locationAddress}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Lat: {holiday.locationLat} Long: {holiday.locationLng}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card className="sm:col-span-2 md:col-span-1">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">
+                            <CardTitle className="text-sm font-medium">
+                                Visited On
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className='dark:text-white'>
+                            <div className="text-2xl font-bold">{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {dayjs(holiday.visitedAt).fromNow()}
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
-                <div className="flex flex-col bg-gray-200 dark:bg-slate-800 rounded-xl p-4">
-                    <Header className="text-slate-800 dark:text-white">Travelled To</Header>
-                    <span className="dark:text-white">{holiday.locationAddress}</span>
+                <div className="grid grid-cols-2 gap-4">
+                    {
+                        holiday.description.length > 0 && (
+                            <Card className={cn("col-span-2", hasPhotos ? 'md:col-span-1' : 'md:col-span-2')}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">
+                                    <CardTitle className="text-sm font-medium">
+                                        Description
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className='dark:text-white'>
+                                    <div className="text-md font-bold text-muted-foreground">{holiday.description}</div>
+                                </CardContent>
+                            </Card>
+                        )
+                    }
+                    {
+                        holiday.photos.length > 0 && (
+                            <Card className={cn("col-span-2", hasDescription ? 'md:col-span-1' : 'md:col-span-2')}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">
+                                    <CardTitle className="text-sm font-medium">
+                                        Photos
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className='dark:text-white'>
+                                    <div className="flex flex-row space-x-2 mt-4">
+                                        {
+                                            holiday.photos.map((x, index) => (
+                                                <PhotoPreview isCoverPhoto={holiday.coverPhotoId ? holiday.coverPhotoId === x.id : index === 0} key={index} src={x.photoUrl} />
+                                            ))
+                                        }
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )
+                    }
                 </div>
-                <div className="flex flex-col bg-gray-200 dark:bg-slate-800 rounded-xl p-4">
-                    <Header className="text-slate-800 dark:text-white">Visited On</Header>
-                    <span className="dark:text-white">{dayjs(holiday.visitedAt).format('MMMM D YYYY')}</span>
-                </div>
-                {
-                    holiday.description.length > 0 && (
-                        <div className="flex flex-col bg-gray-200 dark:bg-slate-800 rounded-xl p-4 col-span-3">
-                            <Header className="text-slate-800 dark:text-white">Description</Header>
-                            <span className="dark:text-white">{holiday.description}</span>
-                        </div>
-                    )
-                }
-                {
-                    holiday.photos.length > 0 && (
-                        <div className="flex flex-col bg-slate-800 rounded-xl p-4 col-span-3">
-                            <Header className="text-slate-800 dark:text-white">Photos</Header>
-                            <div className="flex flex-row space-x-2 mt-4">
-                                {
-                                    holiday.photos.map((x, index) => (
-                                        <PhotoPreview isCoverPhoto={holiday.coverPhotoId ? holiday.coverPhotoId === x.id : index === 0} key={index} src={x.photoUrl} />
-                                    ))
-                                }
-                            </div>
-                        </div>
-                    )
-                }
+                <GoogleMapsComponent position="center">
+                    <Map holidays={[holiday]} height={350} center={{ lat: holiday.locationLat, lng: holiday.locationLng }} zoom={7} />
+                </GoogleMapsComponent>
             </div>
         </>
     )

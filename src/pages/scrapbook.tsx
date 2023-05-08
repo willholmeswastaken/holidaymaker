@@ -22,7 +22,7 @@ const Scrapbook: NextPage = () => {
             <div className="flex flex-row">
                 <Header className="pb-4 flex-1">My Scrapbook</Header>
                 <Link href="/holiday/add">
-                    <Button>Add Holiday</Button>
+                    <Button className="dark:text-white" variant='outline'>Add Holiday</Button>
                 </Link>
             </div>
             {

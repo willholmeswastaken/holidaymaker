@@ -19,6 +19,7 @@ import ErrorLabel from "@/components/ui/errorLabel";
 import { useMemo } from "react";
 import { toast } from "@/hooks/use-toast";
 import PhotoPreview from "@/components/photo-preview";
+import { BackButton } from "@/components/back-button";
 
 export const getServerSideProps = requireAuth(undefined, 'add-holiday');
 
@@ -86,7 +87,8 @@ const AddHoliday: NextPage = () => {
     };
     return (
         <>
-            <Header className="pb-4 text-slate-800">Add Holiday</Header>
+            <BackButton />
+            <Header className="pb-4 text-slate-800 mt-4">Add Holiday</Header>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-row">
                     <div className="flex flex-col gap-y-4 flex-1">

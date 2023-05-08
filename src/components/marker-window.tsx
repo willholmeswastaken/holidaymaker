@@ -26,6 +26,7 @@ const MarkerWindow = ({ holiday, onMarkerClose }: MarkerWindow) => {
                         src={coverPhoto?.photoUrl as string}
                         alt={`Holiday photo for ${holiday.title}`}
                         fill
+                        sizes="sizes='(max-width: 100) 100vw'"
                         className='object-cover'
                         placeholder='blur'
                         blurDataURL='/loading.png'
