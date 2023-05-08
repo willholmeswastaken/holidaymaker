@@ -31,7 +31,7 @@ function Header() {
                             }}
                         />
                     ) : (
-                        <Button onClick={onLogIn}>Login</Button>
+                        <Button className='dark:text-white' variant='link' onClick={onLogIn}>Login</Button>
                     )
                 }
             </div>

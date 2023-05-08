@@ -12,6 +12,8 @@ import { Map } from "@/components/map";
 import { BackButton } from "@/components/back-button";
 import { cn } from "@/utils/cn";
 import { getHolidayDisplayPhotos } from "@/utils/getHolidayDisplayPhotos";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 dayjs.extend(relativeTime)
 
@@ -58,7 +60,14 @@ const ViewHoliday: NextPage<Props> = ({ holiday }) => {
     return (
         <>
             <div className="flex flex-col space-y-4">
-                <BackButton />
+                <div className="flex flex-row">
+                    <div className="self-start flex-1">
+                        <BackButton />
+                    </div>
+                    <Link href={`/holiday/edit/${holiday.id}`}>
+                        <Button className="dark:text-white" variant='outline'>Edit Holiday</Button>
+                    </Link>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 dark:text-white">

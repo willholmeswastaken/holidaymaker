@@ -56,8 +56,13 @@ export function HolidayOperations({ holiday, onHolidayRemoved }: HolidayOperatio
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem>
-                        <Link href={`/holiday/${holiday.id}`} className="flex w-full">
+                        <Link href={`/holiday/edit/${holiday.id}`} className="flex w-full">
                             Edit
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link href={`/holiday/${holiday.id}`} className="flex w-full">
+                            View
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
