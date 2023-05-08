@@ -116,21 +116,13 @@ export default async function handler(
 
     try {
       const holidayId = req.query.holidayId?.toString();
-      logger.info("Fetching existing photos for holiday: ", holidayId);
-      const existingHolidayPhotos = await prisma.holidayPhoto.findMany({
-        where: {
-          holidayId,
-          userId: session.user.id,
-        },
-      });
-
       logger.info("Creating holiday photo");
       await prisma.holidayPhoto.create({
         data: {
           userId: session.user.id,
           photoFileName: fileName,
           holidayId,
-          isCoverPhoto: existingHolidayPhotos.length === 0,
+          isCoverPhoto: req.query.isCoverPhoto === "true",
         },
       });
       logger.info("Created holiday photo");

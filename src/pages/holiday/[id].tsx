@@ -26,7 +26,11 @@ export const getServerSideProps = requireAuth(async (ctx) => {
             userId: session?.user.id,
         },
         include: {
-            photos: true
+            photos: {
+                orderBy: {
+                    isCoverPhoto: 'desc'
+                }
+            }
         }
     });
     if (holiday === null || session === null) {
@@ -133,7 +137,7 @@ const ViewHoliday: NextPage<Props> = ({ holiday }) => {
                                     <div className="flex flex-row space-x-2 mt-4">
                                         {
                                             holiday.photos.map((x, index) => (
-                                                <PhotoPreview isCoverPhoto={holiday.coverPhotoId ? holiday.coverPhotoId === x.id : index === 0} key={index} src={x.photoUrl} />
+                                                <PhotoPreview isCoverPhoto={x.isCoverPhoto} key={index} src={x.photoUrl} />
                                             ))
                                         }
                                     </div>

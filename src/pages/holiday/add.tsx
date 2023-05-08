@@ -36,6 +36,7 @@ type HolidayInputs = {
 type UploadHolidayPhotoProps = {
     photo: File;
     holidayId: string;
+    isCoverPhoto: boolean;
 };
 
 const AddHoliday: NextPage = () => {
@@ -47,10 +48,10 @@ const AddHoliday: NextPage = () => {
         }
     });
     const uploadPhotoMutation = useMutation({
-        mutationFn: ({ photo, holidayId }: UploadHolidayPhotoProps) => {
+        mutationFn: ({ photo, holidayId, isCoverPhoto }: UploadHolidayPhotoProps) => {
             const formData = new FormData();
             formData.append('file', photo);
-            return fetch(`/api/upload-photo?holidayId=${encodeURIComponent(holidayId)} `, {
+            return fetch(`/api/upload-photo?holidayId=${encodeURIComponent(holidayId)}&isCoverPhoto=${encodeURIComponent(isCoverPhoto)} `, {
                 method: 'POST',
                 body: formData,
             });
@@ -72,8 +73,12 @@ const AddHoliday: NextPage = () => {
 
         if (createHolidayMutation.isError) return;
 
-        for (const photo of data.photos || []) {
-            await uploadPhotoMutation.mutateAsync({ photo, holidayId });
+        const uploads: Promise<unknown>[] = [];
+        if (data.photos) {
+            for (let i = 0; i < data.photos.length; i++) {
+                uploads.push(uploadPhotoMutation.mutateAsync({ photo: data.photos[i] as File, holidayId, isCoverPhoto: i === 0 }));
+            }
+            await Promise.all(uploads);
         }
 
         toast({

@@ -74,14 +74,40 @@ type UploadHolidayPhotoProps = {
 };
 
 const EditHoliday: NextPage<Props> = ({ holiday }) => {
-    const editHolidayMutation = api.holiday.editHoliday.useMutation();
-    const updateCoverPhotoMutation = api.holiday.setCoverPhoto.useMutation();
     const getHolidayPhotos = api.holiday.getHolidayPhotos.useQuery({ holidayId: holiday.id });
-    const removePhotoMutation = api.holiday.removePhoto.useMutation();
-    const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<HolidayInputs>({
-        defaultValues: {
-            ...holiday,
-            photos: undefined
+    const editHolidayMutation = api.holiday.editHoliday.useMutation();
+    const updateCoverPhotoMutation = api.holiday.setCoverPhoto.useMutation({
+        onError: () => {
+            toast({
+                title: "Cover photo update failed!",
+                description: 'Failed to update the cover photo, please try again.',
+                variant: "destructive",
+            });
+        },
+        onSuccess: async () => {
+            await getHolidayPhotos.refetch();
+            toast({
+                title: "Cover photo updated",
+                description: "Your cover photo was updated successfully.",
+                variant: "default",
+            });
+        }
+    });
+    const removePhotoMutation = api.holiday.removePhoto.useMutation({
+        onError: () => {
+            toast({
+                title: "Photo removal failed!",
+                description: 'Failed to remove the photo, please try again.',
+                variant: "destructive",
+            });
+        },
+        onSuccess: async () => {
+            await getHolidayPhotos.refetch();
+            toast({
+                title: "Photo removed",
+                description: "Your seleced photo was removed successfully.",
+                variant: "default",
+            });
         }
     });
     const uploadPhotoMutation = useMutation({
@@ -102,17 +128,29 @@ const EditHoliday: NextPage<Props> = ({ holiday }) => {
                 });
             }
         }
-    })
-    const isLoading = useMemo<boolean>(() => editHolidayMutation.isLoading || uploadPhotoMutation.isLoading, [editHolidayMutation.isLoading, uploadPhotoMutation.isLoading]);
+    });
+    const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<HolidayInputs>({
+        defaultValues: {
+            ...holiday,
+            photos: undefined
+        }
+    });
+    const isLoading = useMemo<boolean>(() =>
+        editHolidayMutation.isLoading ||
+        uploadPhotoMutation.isLoading,
+        [editHolidayMutation.isLoading, uploadPhotoMutation.isLoading]
+    );
 
     const onSubmit: SubmitHandler<HolidayInputs> = async data => {
         await editHolidayMutation.mutateAsync({ id: holiday.id, ...data });
 
         if (editHolidayMutation.isError) return;
 
+        const uploads: Promise<unknown>[] = [];
         for (const photo of data.photos || []) {
-            await uploadPhotoMutation.mutateAsync({ photo, holidayId: holiday.id });
+            uploads.push(uploadPhotoMutation.mutateAsync({ photo, holidayId: holiday.id }));
         }
+        await Promise.all(uploads);
 
         toast({
             title: "Holiday Updated",
@@ -125,28 +163,10 @@ const EditHoliday: NextPage<Props> = ({ holiday }) => {
 
     const setCoverPhoto = async (photoId: string) => {
         await updateCoverPhotoMutation.mutateAsync({ holidayId: holiday.id, id: photoId });
-        if (updateCoverPhotoMutation.isError) {
-            toast({
-                title: "Cover photo update failed!",
-                description: 'Failed to update the cover photo, please try again.',
-                variant: "destructive",
-            });
-            return;
-        }
-        await getHolidayPhotos.refetch();
     };
 
     const removePhoto = async (photoId: string) => {
         await removePhotoMutation.mutateAsync({ holidayId: holiday.id, id: photoId });
-        if (removePhotoMutation.isError) {
-            toast({
-                title: "Photo removal failed!",
-                description: 'Failed to remove the photo, please try again.',
-                variant: "destructive",
-            });
-            return;
-        }
-        await getHolidayPhotos.refetch();
     }
     return (
         <>

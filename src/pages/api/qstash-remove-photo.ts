@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   logger.info("QStash photo removal command called");
   const { photo } = req.body as RemovePhotoRequest;
   const key = s3FilePathResolver(photo.photoFileName, photo.userId);
-  console.log(key);
+  logger.info(key);
   const command = new DeleteObjectCommand({ Bucket: env.AWS_BUCKET, Key: key });
   try {
     await s3.send(command);
