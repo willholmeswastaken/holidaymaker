@@ -149,12 +149,14 @@ export const holidayRouter = createTRPCRouter({
           id: input.id,
         },
       });
-      await qStashClient.publishJSON({
-        topic: "holidaymaker-photo-clearance",
-        body: {
-          photos: holiday.photos,
-        },
-      });
+      for (const photo of holiday.photos) {
+        await qStashClient.publishJSON({
+          topic: env.QSTASH_PHOTO_REMOVAL_TOPIC,
+          body: {
+            photo: photo,
+          },
+        });
+      }
     }),
   setCoverPhoto: protectedProcedure
     .input(
@@ -221,12 +223,10 @@ export const holidayRouter = createTRPCRouter({
           id: input.id,
         },
       });
-
-      console.log("qstashtoken", env.UPSTASH_QSTASH_TOKEN);
       await qStashClient.publishJSON({
-        topic: "holidaymaker-photo-clearance",
+        topic: env.QSTASH_PHOTO_REMOVAL_TOPIC,
         body: {
-          photos: [holiday.photos.find((x) => x.id === input.id)],
+          photo: holiday.photos.find((x) => x.id === input.id),
         },
       });
     }),
