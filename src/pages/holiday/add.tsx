@@ -72,8 +72,6 @@ const AddHoliday: NextPage = () => {
 
         if (createHolidayMutation.isError) return;
 
-        if (!data.photos) await router.push('/scrapbook');
-
         for (const photo of data.photos || []) {
             await uploadPhotoMutation.mutateAsync({ photo, holidayId });
         }
@@ -83,6 +81,7 @@ const AddHoliday: NextPage = () => {
             description: "You can view this holiday in your scrapbook now.",
             variant: "default",
         });
+
         await router.push('/scrapbook');
     };
     return (
@@ -105,7 +104,7 @@ const AddHoliday: NextPage = () => {
                         </div>
 
                         <div className="flex flex-col gap-y-2">
-                            <Label htmlFor="description">Date Visited</Label>
+                            <Label htmlFor="visitedAt">Date Visited</Label>
                             <Controller
                                 control={control}
                                 name="visitedAt"
@@ -144,7 +143,7 @@ const AddHoliday: NextPage = () => {
                         </div>
 
                         <div className="flex flex-col gap-y-2">
-                            <Label htmlFor="description">Photo</Label>
+                            <Label htmlFor="photos">Photos</Label>
                             <input type="file" className="text-white" {...register("photos")} multiple accept="image/*" />
                             {errors.photos && <ErrorLabel>This field is required</ErrorLabel>}
                             <Controller
@@ -171,7 +170,7 @@ const AddHoliday: NextPage = () => {
                         </div>
 
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full dark:text-white" variant='outline' disabled={isLoading}>
                             {
                                 isLoading
                                     ? (

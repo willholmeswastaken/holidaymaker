@@ -1,11 +1,16 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { s3FilePathResolver } from "@/utils/s3FilePathResolver";
 import {
   type HolidayPhotoViewModel,
   type HolidayWithPhotoViewModel,
 } from "@/types/HolidayWithPhoto";
-import { getS3ImageUrl } from "@/utils/getS3ImageUrl";
+import { getHolidayDisplayPhotos } from "@/utils/getHolidayDisplayPhotos";
+import { Client } from "@upstash/qstash";
+import { env } from "@/env.mjs";
+
+const qStashClient = new Client({
+  token: env.UPSTASH_QSTASH_TOKEN,
+});
 
 export const holidayRouter = createTRPCRouter({
   getHolidays: protectedProcedure.query(async ({ ctx }) => {
@@ -24,39 +29,45 @@ export const holidayRouter = createTRPCRouter({
         Date.parse(b.loggedAt.toISOString()) -
         Date.parse(a.loggedAt.toISOString())
     )) {
-      const photos: HolidayPhotoViewModel[] = [];
-      for (const photo of holiday.photos) {
-        const key = s3FilePathResolver(
-          photo.photoFileName,
-          ctx.session.user.id
-        );
-        photos.push({
-          ...photo,
-          uploadedAt: photo.uploadedAt.toISOString(),
-          photoUrl: await getS3ImageUrl(key),
-        });
-      }
-      if (photos.length === 0) {
-        photos.push({
-          id: "default",
-          photoUrl: "/default.jpeg",
-          isCoverPhoto: true,
-          holidayId: holiday.id,
-          userId: ctx.session.user.id,
-          uploadedAt: new Date().toISOString(),
-          photoFileName: "Default",
-        });
-      }
-
       holidaysParsed.push({
         ...holiday,
         visitedAt: holiday.visitedAt.toISOString(),
         loggedAt: holiday.loggedAt.toISOString(),
-        photos,
+        photos: await getHolidayDisplayPhotos(
+          holiday.photos,
+          ctx.session.user.id,
+          holiday.id
+        ),
       });
     }
     return holidaysParsed;
   }),
+  getHolidayPhotos: protectedProcedure
+    .input(z.object({ holidayId: z.string().nonempty() }))
+    .query(async ({ ctx, input }) => {
+      const holidayPhotos = await ctx.prisma.holidayPhoto.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          holidayId: input.holidayId,
+        },
+        orderBy: {
+          isCoverPhoto: "desc",
+        },
+      });
+
+      if (holidayPhotos.length === 0) {
+        return [];
+      }
+
+      const holidayPhotosParsed: HolidayPhotoViewModel[] =
+        await getHolidayDisplayPhotos(
+          holidayPhotos,
+          ctx.session.user.id,
+          input.holidayId
+        );
+
+      return holidayPhotosParsed;
+    }),
   createHoliday: protectedProcedure
     .input(
       z.object({
@@ -83,6 +94,40 @@ export const holidayRouter = createTRPCRouter({
 
       return holiday.id;
     }),
+  editHoliday: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+        title: z.string().nonempty(),
+        description: z.string(),
+        visitedAt: z.string().nonempty(),
+        locationAddress: z.string().nonempty(),
+        locationLat: z.number(),
+        locationLng: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.holiday.findFirstOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.session.user.id,
+        },
+      });
+      await ctx.prisma.holiday.update({
+        data: {
+          title: input.title,
+          description: input.description,
+          visitedAt: input.visitedAt,
+          locationAddress: input.locationAddress,
+          locationLat: input.locationLat,
+          locationLng: input.locationLng,
+          userId: ctx.session.user.id,
+        },
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   removeHoliday: protectedProcedure
     .input(
       z.object({
@@ -90,9 +135,98 @@ export const holidayRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const holiday = await ctx.prisma.holiday.findFirstOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.session.user.id,
+        },
+        include: {
+          photos: true,
+        },
+      });
       await ctx.prisma.holiday.delete({
         where: {
           id: input.id,
+        },
+      });
+      await qStashClient.publishJSON({
+        topic: "holidaymaker-photo-clearance",
+        body: {
+          photos: holiday.photos,
+        },
+      });
+    }),
+  setCoverPhoto: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+        holidayId: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.holiday.findFirstOrThrow({
+        where: {
+          id: input.holidayId,
+          userId: ctx.session.user.id,
+        },
+      });
+      await ctx.prisma.holiday.update({
+        data: {
+          photos: {
+            updateMany: {
+              data: {
+                isCoverPhoto: false,
+              },
+              where: {
+                holidayId: input.holidayId,
+                NOT: {
+                  id: input.id,
+                },
+              },
+            },
+            update: {
+              where: {
+                id: input.id,
+              },
+              data: {
+                isCoverPhoto: true,
+              },
+            },
+          },
+        },
+        where: {
+          id: input.holidayId,
+        },
+      });
+    }),
+  removePhoto: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+        holidayId: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const holiday = await ctx.prisma.holiday.findFirstOrThrow({
+        where: {
+          id: input.holidayId,
+          userId: ctx.session.user.id,
+        },
+        include: {
+          photos: true,
+        },
+      });
+      await ctx.prisma.holidayPhoto.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      console.log("qstashtoken", env.UPSTASH_QSTASH_TOKEN);
+      await qStashClient.publishJSON({
+        topic: "holidaymaker-photo-clearance",
+        body: {
+          photos: [holiday.photos.find((x) => x.id === input.id)],
         },
       });
     }),

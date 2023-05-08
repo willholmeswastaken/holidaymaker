@@ -50,6 +50,25 @@ export default async function handler(
       return;
     }
 
+    if (!req.query.holidayId) {
+      res.status(400).end();
+      logger.warn("No holidayId was provided, returning 400 status code");
+      return;
+    }
+
+    try {
+      await prisma.holiday.findFirstOrThrow({
+        where: {
+          id: req.query.holidayId as string,
+          userId: session.user.id,
+        },
+      });
+    } catch (error) {
+      res.status(404).end();
+      logger.warn("Holiday does not exist, returning 404 status code");
+      return;
+    }
+
     logger.info("User session exists, parsing form data");
     const form = new formidable.IncomingForm();
     const { files } = await new Promise<{
@@ -96,7 +115,7 @@ export default async function handler(
     logger.info("Photo file uploaded to S3, creating holiday photo record");
 
     try {
-      const holidayId = req.query.holidayId?.toString() as string;
+      const holidayId = req.query.holidayId?.toString();
       logger.info("Fetching existing photos for holiday: ", holidayId);
       const existingHolidayPhotos = await prisma.holidayPhoto.findMany({
         where: {

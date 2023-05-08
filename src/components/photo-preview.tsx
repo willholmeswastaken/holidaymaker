@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { DialogClose } from '@radix-ui/react-dialog';
 import Image from 'next/image';
@@ -8,11 +8,14 @@ import clsx from 'clsx';
 type PhotoPreviewProps = {
     file?: File;
     src?: string;
-    isCoverPhoto: boolean;
+    isCoverPhoto?: boolean;
     setIsCoverPhoto?: (file: File) => void;
+    setIsCoverPhotoById?: (photoId: string) => void;
+    id?: string;
+    removePhotoById?: (photoId: string) => void;
 };
 
-const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreviewProps) => {
+const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto, setIsCoverPhotoById, id, removePhotoById }: PhotoPreviewProps) => {
     const [fileSrc, setFileSrc] = useState('');
 
     useEffect(() => {
@@ -28,7 +31,12 @@ const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreview
     if (!fileSrc && !src) return null;
 
     const onSelectPhoto = () => {
-        if (setIsCoverPhoto) setIsCoverPhoto(file!);
+        if (src && id && setIsCoverPhotoById) setIsCoverPhotoById(id);
+        else if (file && setIsCoverPhoto) setIsCoverPhoto(file);
+    }
+
+    const onRemovePhoto = () => {
+        if (id && removePhotoById) removePhotoById(id);
     }
 
     return (
@@ -64,13 +72,24 @@ const PhotoPreview = ({ file, src, isCoverPhoto, setIsCoverPhoto }: PhotoPreview
                                 blurDataURL='/loading.png' />
                         </div>
                     </DialogHeader>
-                    <DialogFooter>
+                    <DialogFooter className='mt-[-15px]'>
                         <DialogClose asChild>
                             <Button className='dark:text-white' variant='ghost'>Close</Button>
                         </DialogClose>
-                        <DialogClose asChild>
-                            <Button className='dark:text-white' variant='outline' onClick={onSelectPhoto}>Set as cover photo</Button>
-                        </DialogClose>
+                        {
+                            !!removePhotoById && (
+                                <DialogClose asChild>
+                                    <Button className='dark:text-white' variant='destructive' onClick={onRemovePhoto}>Remove photo</Button>
+                                </DialogClose>
+                            )
+                        }
+                        {
+                            !!(setIsCoverPhoto || setIsCoverPhotoById) && (
+                                <DialogClose asChild>
+                                    <Button className='dark:text-white' variant='outline' onClick={onSelectPhoto}>Set as cover photo</Button>
+                                </DialogClose>
+                            )
+                        }
                     </DialogFooter>
                 </DialogContent>
             </Dialog >

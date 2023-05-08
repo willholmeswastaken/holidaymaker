@@ -1,8 +1,6 @@
 import { prisma } from "@/server/db";
-import { type HolidayPhotoViewModel, type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto";
-import { getS3ImageUrl } from "@/utils/getS3ImageUrl";
+import { type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto";
 import { requireAuth } from "@/utils/requireAuth";
-import { s3FilePathResolver } from "@/utils/s3FilePathResolver";
 import { type NextPage } from "next";
 import { getSession } from "next-auth/react";
 import dayjs from 'dayjs';
@@ -13,6 +11,7 @@ import GoogleMapsComponent from "@/components/google-maps-component";
 import { Map } from "@/components/map";
 import { BackButton } from "@/components/back-button";
 import { cn } from "@/utils/cn";
+import { getHolidayDisplayPhotos } from "@/utils/getHolidayDisplayPhotos";
 
 dayjs.extend(relativeTime)
 
@@ -34,37 +33,14 @@ export const getServerSideProps = requireAuth(async (ctx) => {
         ctx.res.end();
         return { props: {} };
     }
-    const photos: HolidayPhotoViewModel[] = [];
-
-    for (const photo of holiday.photos) {
-        const key = s3FilePathResolver(
-            photo.photoFileName,
-            session.user.id
-        );
-        photos.push({
-            ...photo,
-            uploadedAt: photo.uploadedAt.toISOString(),
-            photoUrl: await getS3ImageUrl(key),
-        });
-    }
-    if (photos.length === 0) {
-        photos.push({
-            id: "default",
-            photoUrl: "/default.jpeg",
-            isCoverPhoto: true,
-            holidayId: holiday.id,
-            userId: session.user.id,
-            photoFileName: "Default",
-            uploadedAt: new Date().toISOString(),
-        });
-    }
 
     const holidayViewModel: HolidayWithPhotoViewModel = {
         ...holiday,
-        photos,
+        photos: await getHolidayDisplayPhotos(holiday.photos, session.user.id, holiday.id),
         visitedAt: holiday.visitedAt.toISOString(),
         loggedAt: holiday.visitedAt.toISOString(),
     }
+
     return {
         props: {
             holiday: holidayViewModel
