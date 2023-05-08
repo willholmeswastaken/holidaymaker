@@ -15,6 +15,7 @@ export const config = {
   api: {
     bodyParser: false,
   },
+  runtime: "edge",
 };
 
 async function uploadToS3(bucket: string, key: string, filePath: string) {

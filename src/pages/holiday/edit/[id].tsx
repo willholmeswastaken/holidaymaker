@@ -232,7 +232,7 @@ const EditHoliday: NextPage<Props> = ({ holiday }) => {
                                     <Label>Existing Photos</Label>
                                     <div className="flex flex-row gap-2">
                                         {
-                                            !removePhotoMutation.isLoading && !getHolidayPhotos.isLoading && getHolidayPhotos.data && getHolidayPhotos.data.length > 0
+                                            !removePhotoMutation.isLoading && !getHolidayPhotos.isLoading
                                                 ? getHolidayPhotos.data.map((photo, index) => (
                                                     <PhotoPreview isCoverPhoto={photo.isCoverPhoto} removePhotoById={removePhoto} setIsCoverPhotoById={setCoverPhoto} id={photo.id} key={index} src={photo.photoUrl} />
                                                 ))
