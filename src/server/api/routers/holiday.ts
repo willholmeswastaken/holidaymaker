@@ -218,15 +218,27 @@ export const holidayRouter = createTRPCRouter({
           photos: true,
         },
       });
+      const targetPhoto = holiday.photos.find((x) => x.id === input.id);
       await ctx.prisma.holidayPhoto.delete({
         where: {
           id: input.id,
         },
       });
+      if (targetPhoto?.isCoverPhoto && holiday.photos.length > 1) {
+        const newCoverPhoto = holiday.photos.find((x) => x.id !== input.id);
+        await ctx.prisma.holidayPhoto.update({
+          where: {
+            id: newCoverPhoto?.id as string,
+          },
+          data: {
+            isCoverPhoto: true,
+          },
+        });
+      }
       await qStashClient.publishJSON({
         topic: env.QSTASH_PHOTO_REMOVAL_TOPIC,
         body: {
-          photo: holiday.photos.find((x) => x.id === input.id),
+          photo: targetPhoto,
         },
       });
     }),
