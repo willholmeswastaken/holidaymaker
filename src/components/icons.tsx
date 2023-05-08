@@ -9,7 +9,6 @@ import {
     CreditCard,
     File,
     FileText,
-    Github,
     HelpCircle,
     Image,
     Loader2,

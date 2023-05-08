@@ -3,6 +3,7 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 type Props<T> = {
     data: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     columns: ColumnDef<T, any>[]
     onEdit?: (item: T) => void;
     onDelete?: (item: T) => void;

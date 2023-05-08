@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PlacesAutocomplete } from "@/components/places-autocomplete";
 import { api } from "@/utils/api";
-import { useRouter } from "next/router";
 import GoogleMapsComponent from "@/components/google-maps-component";
 import ErrorLabel from "@/components/ui/errorLabel";
 import { useMemo } from "react";

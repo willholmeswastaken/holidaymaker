@@ -35,6 +35,7 @@ export const PlacesAutocomplete = ({
                         setValue(description, false);
                         clearSuggestions();
                         void getGeocode({ address: description }).then((results) => {
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                             const { lat, lng } = getLatLng(results[0]!);
                             console.log("📍 Coordinates: ", { lat, lng });
                             onAddressSelect && onAddressSelect(description, lat, lng);

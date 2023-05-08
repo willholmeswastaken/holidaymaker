@@ -26,6 +26,7 @@ DialogPortal.displayName = DialogPrimitive.Portal.displayName
 const DialogOverlay = React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Overlay>,
     React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 >(({ className, children, ...props }, ref) => (
     <DialogPrimitive.Overlay
         className={cn(
