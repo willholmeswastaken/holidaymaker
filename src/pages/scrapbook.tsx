@@ -21,7 +21,7 @@ const Scrapbook: NextPage = () => {
             <Seo
                 title="HolidayMaker - Scrapbook"
                 description="View your holidays in the map or in your list, it's your scrapbook."
-                image="https://holidaymaker.vercel.app/api/og?title=HolidayMaker - Scrapbook"
+                image="https://holidaymaker.vercel.app/api/og?title=Your holiday scrapbook"
             />
             <div className="flex flex-row">
                 <Header className="pb-4 flex-1">My Scrapbook</Header>

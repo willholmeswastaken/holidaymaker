@@ -14,7 +14,7 @@ const ogImageHandler = (req: NextRequest) => {
         tw="h-full w-full flex items-start justify-start bg-white"
       >
         <div tw="flex items-start justify-start h-full">
-          <div tw="flex flex-col justify-between w-full h-full px-10 py-10">
+          <div tw="flex flex-col justify-between w-full h-full p-20">
             <p style={{
               backgroundImage: 'linear-gradient(90deg, rgb(255, 77, 77), rgb(249, 203, 40))',
               backgroundClip: 'text',

@@ -20,6 +20,7 @@ import { useMemo } from "react";
 import { toast } from "@/hooks/use-toast";
 import PhotoPreview from "@/components/photo-preview";
 import { BackButton } from "@/components/back-button";
+import Seo from "@/components/seo";
 
 export const getServerSideProps = requireAuth(undefined, 'add-holiday');
 
@@ -91,6 +92,11 @@ const AddHoliday: NextPage = () => {
     };
     return (
         <>
+            <Seo
+                title="HolidayMaker - Add a holiday"
+                description="Add a holiday to your scrapbook, click to get started!"
+                image="https://holidaymaker.vercel.app/api/og?title=Add a holiday!"
+            />
             <BackButton />
             <Header className="pb-4 text-slate-800 mt-4">Add Holiday</Header>
             <form onSubmit={handleSubmit(onSubmit)}>
