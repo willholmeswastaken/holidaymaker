@@ -23,6 +23,7 @@ import { getSession } from "next-auth/react";
 import { prisma } from "@/server/db";
 import { type HolidayWithPhotoViewModel } from "@/types/HolidayWithPhoto";
 import { Skeleton } from "@/components/ui/skeleton";
+import Seo from "@/components/seo";
 
 export const getServerSideProps = requireAuth(async (ctx) => {
     const { id } = ctx.query;
@@ -170,6 +171,11 @@ const EditHoliday: NextPage<Props> = ({ holiday }) => {
     }
     return (
         <>
+            <Seo
+                title={`HolidayMaker - ${holiday.title}`}
+                description={`You travelled to ${holiday.locationAddress}. Click to view more!`}
+                image={`https://holidaymaker.vercel.app/api/og?title=${encodeURIComponent(holiday.title)}`}
+            />
             <BackButton />
             <Header className="pb-4 text-slate-800 mt-4">Edit Holiday</Header>
             <form onSubmit={handleSubmit(onSubmit)}>

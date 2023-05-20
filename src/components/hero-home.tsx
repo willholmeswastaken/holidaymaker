@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 function HeroHome() {
-    // todo: refactor this and make it look nice
     const { data: sessionData, } = useSession();
     const { push } = useRouter();
     const isAuthenticated = useMemo<boolean>(() => sessionData?.user !== null && sessionData?.user !== undefined, [sessionData]);

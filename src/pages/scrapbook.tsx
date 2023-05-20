@@ -8,6 +8,7 @@ import GoogleMapsComponent from "@/components/google-maps-component";
 import { api } from "@/utils/api";
 import HolidaysList from "@/components/holidays-list";
 import { Skeleton } from "@/components/ui/skeleton";
+import Seo from "@/components/seo";
 
 export const getServerSideProps = requireAuth(undefined, 'scrapbook');
 
@@ -17,6 +18,11 @@ const Scrapbook: NextPage = () => {
     if (isError) return <div>Error</div>;
     return (
         <>
+            <Seo
+                title="HolidayMaker - Scrapbook"
+                description="View your holidays in the map or in your list, it's your scrapbook."
+                image="https://holidaymaker.vercel.app/api/og?title=HolidayMaker - Scrapbook"
+            />
             <div className="flex flex-row">
                 <Header className="pb-4 flex-1">My Scrapbook</Header>
             </div>

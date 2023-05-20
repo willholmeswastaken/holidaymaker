@@ -14,6 +14,7 @@ import { cn } from "@/utils/cn";
 import { getHolidayDisplayPhotos } from "@/utils/getHolidayDisplayPhotos";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Seo from "@/components/seo";
 
 dayjs.extend(relativeTime)
 
@@ -63,6 +64,11 @@ const ViewHoliday: NextPage<Props> = ({ holiday }) => {
     const hasDescription = holiday.description.length > 0;
     return (
         <>
+            <Seo
+                title={`HolidayMaker - ${holiday.title}`}
+                description={`You travelled to ${holiday.locationAddress}. Click to view more!`}
+                image={`https://holidaymaker.vercel.app/api/og?title=${encodeURIComponent(holiday.title)}`}
+            />
             <div className="flex flex-col space-y-4">
                 <div className="flex flex-row">
                     <div className="self-start flex-1">
